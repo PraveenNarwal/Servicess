@@ -10,7 +10,9 @@ import {
   MDBSpinner,
 } from "mdb-react-ui-kit";
 import { Link, useNavigate } from "react-router-dom";
-
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { register } from "../redux/features/authSlice";
 const initialState = {
   firstName: "",
   lastName: "",
@@ -21,10 +23,23 @@ const initialState = {
 
 const Register = () => {
   const [formValue, setFormValue] = useState(initialState);
+  const { loading, error } = useSelector((state) => ({ ...state.auth }));
   const { email, password, firstName, lastName, confirmPassword } = formValue;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    error && toast.error(error);
+  }, [error]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      return toast.error("Password should match");
+    }
+    if (email && password && firstName && lastName && confirmPassword) {
+      dispatch(register({ formValue, navigate, toast }));
+    }
   };
   const onInputChange = (e) => {
     let { name, value } = e.target;
@@ -108,14 +123,14 @@ const Register = () => {
             </div>
             <div className="col-12">
               <MDBBtn style={{ width: "100%" }} className="mt-2">
-                {/* {loading && (
+                {loading && (
                   <MDBSpinner
                     size="sm"
                     role="status"
                     tag="span"
                     className="me-2"
                   />
-                )} */}
+                )}
                 Register
               </MDBBtn>
             </div>
