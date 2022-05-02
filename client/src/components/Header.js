@@ -10,9 +10,15 @@ import {
   MDBCollapse,
   MDBNavbarBrand,
 } from "mdb-react-ui-kit";
+import { useSelector } from "react-redux";
 
 const Header = () => {
   const [show, setShow] = useState(false);
+  const [search, setSearch] = useState("");
+  const { user } = useSelector((state) => ({ ...state.auth }));
+
+  const handleSubmit = (event) => {};
+  const handleLogout = () => {};
 
   return (
     <MDBNavbar fixed="top" expand="lg" style={{ backgroundColor: "#f0e6ea" }}>
@@ -44,7 +50,7 @@ const Header = () => {
                 <p className="header-text">Home</p>
               </MDBNavbarLink>
             </MDBNavbarItem>
-            {/* {user?.result?._id && (
+            {user?.result?._id && (
               <>
                 <MDBNavbarItem>
                   <MDBNavbarLink href="/addTour">
@@ -57,8 +63,8 @@ const Header = () => {
                   </MDBNavbarLink>
                 </MDBNavbarItem>
               </>
-            )} */}
-            {/* {user?.result?._id ? (
+            )}
+            {user?.result?._id ? (
               <MDBNavbarItem>
                 <MDBNavbarLink href="/login">
                   <p className="header-text" onClick={() => handleLogout()}>
@@ -72,7 +78,7 @@ const Header = () => {
                   <p className="header-text">Login</p>
                 </MDBNavbarLink>
               </MDBNavbarItem>
-            )} */}
+            )}
           </MDBNavbarNav>
           <form className="d-flex input-group w-auto" onSubmit={handleSubmit}>
             <input
