@@ -1,5 +1,11 @@
 import React, { useEffect } from "react";
-import { MDBCol, MDBContainer, MDBRow, MDBTypography } from "mdb-react-ui-kit";
+import {
+  MDBCol,
+  MDBContainer,
+  MDBInput,
+  MDBRow,
+  MDBTypography,
+} from "mdb-react-ui-kit";
 
 const Home = () => {
   return (
@@ -11,6 +17,14 @@ const Home = () => {
         alignContent: "center",
       }}
     >
+      <MDBInput
+        label="Email"
+        type="text"
+        name="email"
+        required
+        invalid
+        validation="Please provide your email"
+      />
       <h5>Home page</h5>
     </div>
   );

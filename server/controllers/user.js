@@ -9,7 +9,7 @@ export const signin = async (req, res) => {
   try {
     const oldUser = await userModel.findOne({ email });
     if (!oldUser)
-      return res.status(404).json({ message: "User doesn't exist" });
+      return res.status(404).json({ message: "User doesn't existt" });
 
     const isPasswordCorrect = await bcrypt.compare(password, oldUser.password);
 
@@ -51,5 +51,28 @@ export const signup = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: "something is wrong" });
     console.log(err);
+  }
+};
+
+export const googleSignIn = async (req, res) => {
+  const { email, name, token, googleId } = req.body;
+
+  try {
+    const oldUser = await userModel.findOne({ email });
+    if (oldUser) {
+      const result = { _id: oldUser._id.toString(), email, name };
+      return res.status(200).json({ result, token });
+    }
+
+    const result = await userModel.create({
+      email,
+      name,
+      googleId,
+    });
+
+    res.status(200).json({ result, token });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+    console.log(error);
   }
 };
