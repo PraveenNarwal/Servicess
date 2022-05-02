@@ -10,6 +10,7 @@ import Header from "./components/Header";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { setUser } from "./redux/features/authSlice";
+import AddEdit from "./pages/AddEdit";
 
 function App() {
   const dispatch = useDispatch();
@@ -27,6 +28,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/addTour" element={<AddEdit />} />
+          <Route path="/addTour/:id" element={<AddEdit />} />
         </Routes>
       </div>
     </BrowserRouter>
