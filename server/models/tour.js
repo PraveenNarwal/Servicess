@@ -13,7 +13,7 @@ const tourSchema = mongoose.Schema({
   },
   likes: {
     type: [String],
-    default: [],
+    default: 0,
   },
 });
 

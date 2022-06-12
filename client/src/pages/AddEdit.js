@@ -11,34 +11,55 @@ import FileBase from "react-file-base64";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-// import { createTour, updateTour } from "../redux/features/tourSlice";
+import { createTour, updateTour } from "../redux/features/tourSlice";
 
 const initialState = {
   title: "",
   description: "",
   tags: [],
 };
+
 const AddEdit = () => {
   const [tourData, setTourData] = useState(initialState);
   const [tagErrMsg, setTagErrMsg] = useState(null);
+  const { error, userTours } = useSelector((state) => ({
+    ...state.tour,
+  }));
+  const { user } = useSelector((state) => ({ ...state.auth }));
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { title, description, tags } = tourData;
   const { id } = useParams();
+
+  useEffect(() => {
+    if (id) {
+      const singleTour = userTours.find((tour) => tour._id === id);
+      console.log(singleTour);
+      setTourData({ ...singleTour });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  useEffect(() => {
+    error && toast.error(error);
+  }, [error]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // if (!tags.length) {
-    //   setTagErrMsg("Please provide some tags");
-    // }
-    // if (title && description && tags) {
-    //   const updatedTourData = { ...tourData, name: user?.result?.name };
+    if (!tags.length) {
+      setTagErrMsg("Please provide some tags");
+    }
+    if (title && description && tags) {
+      const updatedTourData = { ...tourData, name: user?.result?.name };
 
-    //   if (!id) {
-    //     dispatch(createTour({ updatedTourData, navigate, toast }));
-    //   } else {
-    //     dispatch(updateTour({ id, updatedTourData, toast, navigate }));
-    //   }
-    //   handleClear();
-    // }
+      if (!id) {
+        dispatch(createTour({ updatedTourData, navigate, toast }));
+      } else {
+        dispatch(updateTour({ id, updatedTourData, toast, navigate }));
+      }
+      handleClear();
+    }
   };
   const onInputChange = (e) => {
     const { name, value } = e.target;
@@ -57,7 +78,6 @@ const AddEdit = () => {
   const handleClear = () => {
     setTourData({ title: "", description: "", tags: [] });
   };
-
   return (
     <div
       style={{
@@ -70,7 +90,7 @@ const AddEdit = () => {
       className="container"
     >
       <MDBCard alignment="center">
-        {/* <h5>{id ? "Update Tour" : "Add Tour"}</h5> */}
+        <h5>{id ? "Update Tour" : "Add Tour"}</h5>
         <MDBCardBody>
           <MDBValidation onSubmit={handleSubmit} className="row g-3" noValidate>
             <div className="col-md-12">
@@ -87,21 +107,23 @@ const AddEdit = () => {
               />
             </div>
             <div className="col-md-12">
-              <textarea
+              <MDBInput
                 placeholder="Enter Description"
                 type="text"
-                style={{ height: "100px" }}
                 value={description}
                 name="description"
                 onChange={onInputChange}
                 className="form-control"
                 required
                 invalid
+                textarea
+                rows={4}
                 validation="Please provide description"
               />
             </div>
             <div className="col-md-12">
               <ChipInput
+                style={{ margin: "10px 0" }}
                 name="tags"
                 variant="outlined"
                 placeholder="Enter Tag"
@@ -110,7 +132,7 @@ const AddEdit = () => {
                 onAdd={(tag) => handleAddTag(tag)}
                 onDelete={(tag) => handleDeleteTag(tag)}
               />
-              {/* {tagErrMsg && <div className="tagErrMsg">{tagErrMsg}</div>} */}
+              {tagErrMsg && <div className="tagErrMsg">{tagErrMsg}</div>}
             </div>
             <div className="d-flex justify-content-start">
               <FileBase
@@ -123,8 +145,7 @@ const AddEdit = () => {
             </div>
             <div className="col-12">
               <MDBBtn style={{ width: "100%" }}>
-                submit
-                {/* {id ? "Update" : "Submit"} */}
+                {id ? "Update" : "Submit"}
               </MDBBtn>
               <MDBBtn
                 style={{ width: "100%" }}

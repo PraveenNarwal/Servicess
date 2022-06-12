@@ -10,15 +10,38 @@ import {
   MDBCollapse,
   MDBNavbarBrand,
 } from "mdb-react-ui-kit";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { setLogout } from "../redux/features/authSlice";
+import { searchTours } from "../redux/features/tourSlice";
+import { useNavigate } from "react-router-dom";
+import decode from "jwt-decode";
 
 const Header = () => {
   const [show, setShow] = useState(false);
   const [search, setSearch] = useState("");
   const { user } = useSelector((state) => ({ ...state.auth }));
   const dispatch = useDispatch();
-  const handleSubmit = () => {};
+  const navigate = useNavigate();
+  const token = user?.token;
+
+  if (token) {
+    const decodedToken = decode(token);
+    if (decodedToken.exp * 1000 < new Date().getTime()) {
+      dispatch(setLogout());
+    }
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (search) {
+      dispatch(searchTours(search));
+      navigate(`/tours/search?searchQuery=${search}`);
+      setSearch("");
+    } else {
+      navigate("/");
+    }
+  };
+
   const handleLogout = () => {
     dispatch(setLogout());
   };
@@ -30,7 +53,7 @@ const Header = () => {
           href="/"
           style={{ color: "#606080", fontWeight: "600", fontSize: "22px" }}
         >
-          Home-Service
+          Home-Tour
         </MDBNavbarBrand>
         <MDBNavbarToggler
           type="button"
@@ -57,7 +80,7 @@ const Header = () => {
               <>
                 <MDBNavbarItem>
                   <MDBNavbarLink href="/addTour">
-                    <p className="header-text">Add</p>
+                    <p className="header-text">Add Tour</p>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
